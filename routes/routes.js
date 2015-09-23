@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var passport = require("passport");
+var base64url = require("base64-url");
+var gmail = require("googleapis").gmail("v1");
 var scopes = ["https://www.googleapis.com/auth/userinfo.email", "https://mail.google.com"];
 
 router.get('/', function(req, res) {
@@ -19,21 +21,25 @@ router.get("/email", function(req, res, next) {
 });
 
 router.post("/send", function(req, res, next) {
-  console.log(req.body);
-  sendEmail(req.user, req.body, )
+  console.log(req.body, req.user);
+  sendEmail(JSON.parse(req.user), req.body);
   res.redirect("/");
 });
 
 module.exports = router;
 
-function sendEmail(user, email, callback) {
+function sendEmail(user, email) {
   var message = "From " + user.emails[0].value + "To " + email.address + "Subject " + email.subject + email.message;
   var msgEncoded = base64url.encode(message);
-  var request = gapi.client.gmail.users.messages.send({
+  var request = gmail.users.messages.send({
     "userId": user.id,
     "message": {
       "raw": msgEncoded
     }
   });
-  request.execute(callback);
+  request.execute(processEmail(err, result));
+}
+
+function processEmail(err, result) {
+  console.log(result);
 }

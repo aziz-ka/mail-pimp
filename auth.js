@@ -14,7 +14,7 @@ function auth() {
     clientSecret: "6Sn1sivSt3Ob13VKOEoyjZmO",
     callbackURL: "http://localhost:3000/auth/google/callback"
   }, function(accessToken, refreshToken, profile, done) {
-    console.log(profile);
+    // console.log(profile);
     return done(null, JSON.stringify(profile._json));
   }));
 }
