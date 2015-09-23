@@ -1,10 +1,15 @@
-<form action="">
+<script>
+  var user = {{{user}}};
+  console.log(user);
+</script>
+
+<form method="post" action="/send">
   <label for="address">Email</label>
-  <input type="email">
+  <input type="email" name="address">
   <label for="subject">Subject</label>
-  <input type="text">
+  <input type="text" name="subject">
   <label for="message"></label>
-  <textarea name="" id="" cols="30" rows="10"></textarea>
+  <textarea name="message" id="" cols="30" rows="10"></textarea>
 
   <input type="submit">
 </form>

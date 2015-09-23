@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var exphbs  = require('express-handlebars');
+var session = require("express-session");
 var passport = require('passport');
 var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 var app = express();
@@ -31,16 +32,12 @@ app.use(bodyParser.urlencoded({
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-
-
+app.use(session({secret: "secret"}));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-
+require("./auth.js")();
 
 var routes = require('./routes/routes');
 app.use('/', routes);
@@ -52,10 +49,7 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-// error handlers
-
 // development error handler; will print stacktrace
-
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
@@ -76,36 +70,6 @@ app.use(function(err, req, res, next) {
     title: 'error'
   });
 });
-
-
-
-
-
-
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
-
-passport.use(new GoogleStrategy({
-  clientID: "758966440539-bupfrt3rha6k9n07v1a4n3l3ta8ksg09.apps.googleusercontent.com",
-  clientSecret: "6Sn1sivSt3Ob13VKOEoyjZmO",
-  callbackURL: "http://localhost:3000/auth/google/callback"
-}, function(accessToken, refreshToken, profile, done) {
-    console.log(profile);
-    return done(null, profile);
-  })
-);
-
-// require("./auth/auth.js");
-
-
-
-
-
-
 
 module.exports = app;
 
