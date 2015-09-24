@@ -37,7 +37,7 @@ app.use(session({secret: "secret"}));
 app.use(passport.initialize());
 app.use(passport.session());
 
-require("./auth.js")();
+require("./auth.js").auth();
 
 var routes = require('./routes/routes');
 app.use('/', routes);
