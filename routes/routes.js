@@ -32,10 +32,20 @@ router.post("/send", function(req, res, next) {
 module.exports = router;
 
 function sendEmail(user, email, tokens) {
-  var message = "From: <" + user.emails[0].value + ">\r\nTo: <" + email.address + ">\r\nSubject: " + email.subject + "\r\n\r\n" + email.message;
+  // insert 3D before opening qoutes in html tags
+  var message = "From: <" + user.emails[0].value +
+                ">\r\nTo: <" + email.address +
+                ">\r\nSubject: " + email.subject +
+                "\r\nContent-Type: text/html; charset=utf-8" +
+                "\r\nMIME-Version: 1.0" +
+                "\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n" +
+                email.message;
+
   var msgEncoded = base64url.encode(message);
-  // console.log(chalk.bgYellow(message));
-  // console.log(chalk.bgYellow(msgEncoded));
+
+  console.log(chalk.bgYellow(message));
+  console.log(chalk.bgCyan(msgEncoded));
+
   gmail.users.messages.send({
     "auth": tokens,
     "userId": "me",
