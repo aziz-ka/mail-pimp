@@ -3,11 +3,13 @@
   console.log(user);
 </script>
 
-<form method="post" action="/send">
+<form method="post" action="/send" enctype="multipart/form-data">
   <label for="address">Email</label>
   <input type="email" name="address">
   <label for="subject">Subject</label>
   <input type="text" name="subject">
+  <label for="attachment">Attachment</label>
+  <input type="file" name="attachment">
   <label for="message"></label>
   <textarea name="message" id="" cols="30" rows="10"></textarea>
 
