@@ -1,14 +1,18 @@
-var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
-var passport = require("passport");
-var chalk = require("chalk");
-var credentials = require("./private/settings.json");
-var clientID = credentials.google.clientID;
-var clientSecret = credentials.google.clientSecret;
-var callbackURL = credentials.google.callbackURL;
-var OAuth2 = require("googleapis").auth.OAuth2;
-var oauth2Client = new OAuth2(clientID, clientSecret, callbackURL);
+var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy,
+    passport = require("passport"),
+    chalk = require("chalk"),
+    credentials = require("./private/settings.json"),
+    clientID = credentials.google.clientID,
+    clientSecret = credentials.google.clientSecret,
+    callbackURL = credentials.google.callbackURL,
+    OAuth2 = require("googleapis").auth.OAuth2,
+    oauth2Client = new OAuth2(clientID, clientSecret, callbackURL);
 
-exports.auth = function() {
+function auth(app, db) {
+  var users = db.collection("users");
+
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   passport.serializeUser(function(user, done) {
     done(null, user);
@@ -26,14 +30,30 @@ exports.auth = function() {
       access_token: accessToken,
       refresh_token: refreshToken
     });
-    return done(null, JSON.stringify(profile._json));
-  }));
-};
 
-exports.tokens = function() {
+    users.findOne({googleId: profile.id}, function(err, user) {
+      if(user) {
+        console.log(user);
+        return done(null, user);
+      } else {
+        var newUser = {
+          googleId: profile.id,
+          email: profile.emails[0].value
+        };
+        users.insert(newUser, function(err, doc) {
+          return done(null, doc);
+        });
+      }
+    });
+  }));
+}
+
+function tokens() {
   console.log(oauth2Client);
   return oauth2Client;
-};
+}
 
-// module.exports = auth;
-// module.exports = hello;
+module.exports = {
+  auth: auth,
+  tokens: tokens
+};

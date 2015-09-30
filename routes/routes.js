@@ -1,94 +1,48 @@
-var express = require('express');
-var router = express.Router();
-var chalk = require("chalk");
-var util = require("util");
-var formidable = require("formidable");
-var passport = require("passport");
-var base64url = require("base64-url");
-var gmail = require("googleapis").gmail("v1");
-var scopes = ["https://www.googleapis.com/auth/userinfo.email", "https://mail.google.com"];
-var auth = require("../auth.js");
-var multer = require("multer");
-var upload = multer({dest:'./uploads/'});
-var fs = require("fs-extra");
+var multer = require("multer"),
+    upload = multer({dest:'./uploads/'}),
+    passport = require("passport"),
+    scopes = ["https://www.googleapis.com/auth/userinfo.email", "https://mail.google.com"],
+    auth = require("../auth.js"),
+    EmailTemplates = require("../templates.js"),
+    Emailer = require("../email.js");
 
-router.get('/', function(req, res) {
-  res.render('index', { title: 'Contactly Emailer' });
-});
+module.exports = function(app, express, db) {
+  var router = express.Router(),
+      templates = new EmailTemplates(db),
+      email = new Emailer();
 
-router.get("/auth/google", passport.authenticate("google", {scope: scopes, accessType: "offline"}));
+  router.get('/', function (req, res) {
+    res.render('index', { title: 'Contactly Emailer' });
+  });
 
-router.get("/auth/google/callback", passport.authenticate("google", {
-  successRedirect: "/email",
-  failureRedirect: "/"
-}));
+  router.get("/auth/google", passport.authenticate("google", {scope: scopes, accessType: "offline"}));
 
-router.get("/email", function(req, res, next) {
-  res.render("email", {user: req.user});
-});
+  router.get("/auth/google/callback", passport.authenticate("google", {
+    successRedirect: "/email",
+    failureRedirect: "/"
+  }));
 
-router.post("/send", upload.single("attachment"), function(req, res, next) {
-  var tokens = auth.tokens();
-  console.log(req.file);
+  router.get("/email", function (req, res, next) {
+    res.render("email", {user: JSON.stringify(req.user), templates: req.user.templates});
+  });
 
-  encodeMessage(JSON.parse(req.user), req.body, req.file, tokens);
-  res.redirect("/");
-});
+  router.get("/templates", function (req, res, next) {
+    res.render("templates", {templates: req.user.templates});
+  });
 
-module.exports = router;
+  router.post("/newtemplate", function (req, res, next) {
+    templates.newTemplate(req.body, req.user);
+    res.redirect("/templates");
+  });
 
-function encodeMessage(user, email, file, tokens) {
-  var message = "";
-  message += "From: <" + user.emails[0].value + ">\r\n";
-  message += "To: <" + email.address + ">\r\n";
-  message += "Subject: " + email.subject + "\r\n";
-  message += "MIME-Version: 1.0\r\n";
+  router.post("/send", upload.single("attachment"), function (req, res, next) {
+    var tokens = auth.tokens();
+    // console.log(req.user);
+    email.encodeMessage(req.user, req.body, req.file, tokens);
+    res.redirect("/");
+  });
 
-  if(!file) {
-    message += "Content-Type: text/html; charset='utf-8'\r\n\r\n";
-    message += email.message;
-    sendEmail(message, tokens);
-  } else {
-    message += "Content-Type: message/rfc822; boundary='the_end'\r\n\r\n";
+  app.use("/", router);
+};
 
-    message += "--the_end\r\n";
-    message += "MIME-Version: 1.0\r\n";
-    message += "Content-Transfer-Encoding: 7bit\r\n";
-    message += "Content-Type: text/html; charset='utf-8'\r\n\r\n";
-    message += email.message + "\r\n\r\n";
 
-    message += "--the_end\r\n";
-    message += "MIME-Version: 1.0\r\n";
-    message += "Content-Type: " + file.mimetype + "\r\n";
-    message += "Content-Transfer-Encoding: base64\r\n";
-    message += "Content-Disposition: attachment; filename='" + file.filename + "'\r\n\r\n";
-
-    fs.readFile(file.path, function(err, fileData) {
-      fileData = base64url.encode(fileData);
-      message += fileData + "\r\n";
-      message += "--the_end--";
-      sendEmail(message, tokens, file, fileData);
-    });
-  }
-  // console.log(file);
-}
-
-function sendEmail(message, tokens, file, fileData) {
-  var msgEncoded = base64url.encode(message);
-
-  console.log(chalk.bgYellow(message));
-  console.log(chalk.bgCyan(msgEncoded));
-
-  gmail.users.messages.send({
-    "auth": tokens,
-    "userId": "me",
-    "resource": {
-      "raw": msgEncoded
-    }
-  }, processEmail);
-}
-
-function processEmail(err, result) {
-  if(err) return err;
-  console.log(result);
-}
