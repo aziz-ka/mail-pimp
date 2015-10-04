@@ -4,12 +4,14 @@ var multer = require("multer"),
     scopes = ["https://www.googleapis.com/auth/userinfo.email", "https://mail.google.com"],
     auth = require("../auth.js"),
     EmailTemplates = require("../templates.js"),
-    Emailer = require("../email.js");
+    Emailer = require("../email.js"),
+    Campaigns = require("../campaigns.js");
 
 module.exports = function(app, express, db) {
   var router = express.Router(),
       templates = new EmailTemplates(db),
-      email = new Emailer();
+      email = new Emailer(),
+      campaigns = new Campaigns(db);
 
   router.get('/', function (req, res) {
     res.render('index', { title: 'Contactly Emailer' });
@@ -37,9 +39,13 @@ module.exports = function(app, express, db) {
 
   router.post("/send", upload.single("attachment"), function (req, res, next) {
     var tokens = auth.tokens();
-    // console.log(req.user);
     email.encodeMessage(req.user, req.body, req.file, tokens);
     res.redirect("/");
+  });
+
+  router.post("/launchcampaign", function (req, res, next) {
+    campaigns.launchCampaign(req.user, req.body);
+    res.redirect("/templates");
   });
 
   app.use("/", router);
