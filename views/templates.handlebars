@@ -10,6 +10,17 @@
             <input type="text" name="campaignName" class="form-control" required>
           </div>
         </div>
+        <div class="form-group">
+          <label for="schedule" class="control-label col-xs-4">Schedule</label>
+          <div class="col-xs-8">
+            <select name="schedule" id="" class="form-control">
+            <option value="">No schedule</option>
+              {{#each schedules}}
+                <option value="{{this.name}}">{{this.name}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
         <div class="touches touch-1">
           <div class="form-group">
             <label for="touch" class="control-label col-xs-4">Touch 1</label>
@@ -61,9 +72,22 @@
               <label for="subject">Subject</label>
               <input type="text" name="subject" class="form-control" required>
             </div>
-            <div class="form-group">
+            <div class="form-group col-xs-8">
+              <br>
               <label for="message">Message</label>
               <textarea name="message" rows="10" class="form-control" required></textarea>
+            </div>
+            <div class="panel panel-default">
+              <br>
+              <div class="panel-body">
+                <span class="text-primary">&lcub;&lcub;first_name&rcub;&rcub;</span><br>
+                <span class="text-primary">&lcub;&lcub;last_name&rcub;&rcub;</span><br>
+                <span class="text-primary">&lcub;&lcub;company_name&rcub;&rcub;</span><br>
+                <span class="text-primary">&lcub;&lcub;email&rcub;&rcub;</span><br>
+                <span class="text-primary">&lcub;&lcub;address&rcub;&rcub;</span><br>
+                <span class="text-primary">&lcub;&lcub;phone&rcub;&rcub;</span><br>
+                <span class="text-primary">&lcub;&lcub;website&rcub;&rcub;</span><br>
+              </div>
             </div>
             <button class="btn btn-primary" type="submit">Submit</button>
           </form>          
@@ -93,6 +117,12 @@
 
     var label = $("label[for='touch']");
     label.last().text(newClass.replace("-", " ").replace("t", "T"));
+  });
+
+  $(".panel-body span").click(function(e) {
+    var messageField = $("textarea");
+    var insert = $(this).text();
+    messageField.val(messageField.val() + insert);
   });
 </script>
 

@@ -37,10 +37,10 @@ module.exports = function() {
 
 
 
-  this.encodeMessage = function(user, email, file, tokens) {
+  this.encodeMessage = function(email, file, tokens) {
     var message = "";
-    message += "From: <" + user.email + ">\r\n";
-    message += "To: <" + email.address + ">\r\n";
+    message += "From: me\r\n";
+    message += "To: " + email.address + "\r\n";
     message += "Subject: " + email.subject + "\r\n";
     message += "MIME-Version: 1.0\r\n";
 
