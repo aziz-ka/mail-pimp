@@ -4,11 +4,13 @@ var express = require('express'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
-    exphbs  = require('express-handlebars'),
+    handlebars = require('express-handlebars'),
     session = require("express-session"),
     app = express(),
     MongoClient = require("mongodb").MongoClient,
-    config = require("./config.js");
+    config = require("./config.js"),
+    Auth = require("./auth.js"),
+    auth = new Auth();
 
 MongoClient.connect(config.dbUrl, function(err, db) {
   if(err) throw err;
@@ -18,12 +20,25 @@ MongoClient.connect(config.dbUrl, function(err, db) {
   app.locals.ENV_DEVELOPMENT = env == 'development';
 
   // view engine setup
-  app.engine('handlebars', exphbs({
+  var hbs = handlebars.create({
+    extname: '.hb',
     defaultLayout: 'main',
-    partialsDir: ['views/partials/']
-  }));
+    partialsDir: ['views/partials/'],
+    helpers: {
+      dayOfWeek: function(dayNum) {
+        if(dayNum == "0") return "Sunday";
+        if(dayNum == "1") return "Monday";
+        if(dayNum == "2") return "Tuesday";
+        if(dayNum == "3") return "Wednesday";
+        if(dayNum == "4") return "Thursday";
+        if(dayNum == "5") return "Friday";
+        if(dayNum == "6") return "Saturday";
+      }
+    }
+  });
+  app.engine('hb', hbs.engine);
   app.set('views', path.join(__dirname, 'views'));
-  app.set('view engine', 'handlebars');
+  app.set('view engine', 'hb');
 
   // app.use(favicon(__dirname + '/public/img/favicon.ico'));
   app.use(logger('dev'));
@@ -36,7 +51,7 @@ MongoClient.connect(config.dbUrl, function(err, db) {
 
   app.use(session({secret: "secret"}));
 
-  require("./auth.js").auth(app, db);
+  auth.auth(app, db);
   require('./routes/routes')(app, express, db);
 
   // catch 404 and forward to error handler

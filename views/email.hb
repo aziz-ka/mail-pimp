@@ -1,7 +1,8 @@
+{{> navbar}}
 <div class="container">
   <div class="row">
     <h1 class="col-xs-12">Send email
-      <a href="/templates" class="btn btn-default pull-right" role="button">New template</a>
+      <a href="/campaigns/new" class="btn btn-link pull-right"><span class="glyphicon glyphicon-plus"></span>&nbsp;New template</a>
     </h1>
     <div class="col-xs-12">
       <form method="post" action="/send" enctype="multipart/form-data">

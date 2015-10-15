@@ -6,13 +6,13 @@ module.exports = function(db) {
       name: body.scheduleName,
       timeZone: body.timeZone,
       timeSlots: {
-        mon: body.monday,
-        tue: body.tuesday,
-        wed: body.wednesday,
-        thu: body.thursday,
-        fri: body.friday,
-        sat: body.saturday,
-        sun: body.sunday
+        1: body.monday,
+        2: body.tuesday,
+        3: body.wednesday,
+        4: body.thursday,
+        5: body.friday,
+        6: body.saturday,
+        0: body.sunday
       }
     };
 

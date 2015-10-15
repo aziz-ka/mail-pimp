@@ -8,52 +8,53 @@ var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy,
     OAuth2 = require("googleapis").auth.OAuth2,
     oauth2Client = new OAuth2(clientID, clientSecret, callbackURL);
 
-function auth(app, db) {
-  var users = db.collection("users");
+module.exports = function() {
+  this.auth = function(app, db) {
+    var users = db.collection("users");
 
-  app.use(passport.initialize());
-  app.use(passport.session());
+    app.use(passport.initialize());
+    app.use(passport.session());
 
-  passport.serializeUser(function(user, done) {
-    done(null, user);
-  });
-  passport.deserializeUser(function(obj, done) {
-    done(null, obj);
-  });
-
-  passport.use(new GoogleStrategy({
-    clientID: clientID,
-    clientSecret: clientSecret,
-    callbackURL: callbackURL
-  }, function(accessToken, refreshToken, profile, done) {
-    oauth2Client.setCredentials({
-      access_token: accessToken,
-      refresh_token: refreshToken
+    passport.serializeUser(function(user, done) {
+      done(null, user);
+    });
+    passport.deserializeUser(function(user, done) {
+      done(null, user);
     });
 
-    users.findOne({googleId: profile.id}, function(err, user) {
-      if(user) {
-        console.log(user);
-        return done(null, user);
-      } else {
-        var newUser = {
-          googleId: profile.id,
-          email: profile.emails[0].value
-        };
-        users.insert(newUser, function(err, doc) {
-          return done(null, doc);
-        });
-      }
-    });
-  }));
-}
+    passport.use(new GoogleStrategy({
+      clientID: clientID,
+      clientSecret: clientSecret,
+      callbackURL: callbackURL
+    }, function(accessToken, refreshToken, profile, done) {
+      oauth2Client.setCredentials({
+        access_token: accessToken,
+        refresh_token: refreshToken
+      });
 
-function tokens() {
-  console.log(oauth2Client);
-  return oauth2Client;
-}
+      users.findOne({googleId: profile.id}, function(err, user) {
+        if(user) {
+          return done(null, user);
+        } else {
+          var newUser = {
+            googleId: profile.id,
+            email: profile.emails[0].value
+          };
+          users.insert(newUser, function(err, newUser) {
+            // no idea how to avoid using ops[0]
+            return done(null, newUser.ops[0]);
+          });
+        }
+      });
+    }));
+  };
 
-module.exports = {
-  auth: auth,
-  tokens: tokens
+  this.tokens = function() {
+    return oauth2Client;
+  };
 };
+
+// module.exports = {
+//   auth: auth,
+//   tokens: tokens
+// };

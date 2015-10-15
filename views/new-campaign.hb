@@ -1,9 +1,10 @@
+{{> navbar}}
 <div class="container">
   <div class="row">
-    <div class="col-xs-6">
+    <div class="col-xs-12 col-sm-6">
       <h2>New campaign</h2>
       <br>
-      <form action="/launchcampaign" method="post" class="form-horizontal">
+      <form action="/launch-campaign" method="post" class="form-horizontal">
         <div class="form-group">
           <label for="capmaignName" class="control-label col-xs-4">Campaign name</label>
           <div class="col-xs-8">
@@ -45,7 +46,7 @@
         <button type="submit" class="btn btn-primary pull-right launchCampaign">Launch</button>
       </form>
     </div>
-    <div class="col-xs-6">
+    <div class="col-xs-12 col-sm-6">
       <h2 class="text-right">Email templates</h2>
       <br>
       {{#each templates}}
@@ -63,7 +64,7 @@
       <div class="modal-content">
         <div class="modal-body">
           <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
-          <form action="/newtemplate" method="post">
+          <form action="/new-template" method="post">
             <div class="form-group">
               <label for="name">Template name</label>
               <input type="text" name="name" class="form-control" required>

@@ -1,6 +1,7 @@
+{{> navbar}}
 <div class="container">
   <div class="row">
-    <div class="col-xs-6">
+    <div class="col-xs-12 col-sm-6">
       <h2>New schedule</h2>
       <br>
       <form action="newschedule" method="post" class="form-horizontal">
@@ -67,7 +68,7 @@
       </form>
     </div>
 
-    <div class="col-xs-6">
+    <div class="col-xs-12 col-sm-6">
       <h2 class="text-right">All schedules</h2>
       <br>
       {{#each schedules}}
@@ -76,7 +77,11 @@
           <div class="panel-body">
             {{#each this.timeSlots}}
               {{#if this}}
-                {{@key}},
+                {{#if @key}}
+                  {{#dayOfWeek @key}}&nbsp;
+                    {{dayNum}}
+                  {{/dayOfWeek}}
+                {{/if}}
               {{/if}}
             {{/each}}
           </div>

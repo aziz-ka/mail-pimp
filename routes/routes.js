@@ -2,7 +2,7 @@ var multer = require("multer"),
     upload = multer({dest:'./uploads/'}),
     passport = require("passport"),
     scopes = ["https://www.googleapis.com/auth/userinfo.email", "https://mail.google.com"],
-    auth = require("../auth.js"),
+    Auth = require("../auth.js"),
     EmailTemplates = require("../templates.js"),
     Emailer = require("../email.js"),
     Campaigns = require("../campaigns.js"),
@@ -10,6 +10,7 @@ var multer = require("multer"),
 
 module.exports = function(app, express, db) {
   var router = express.Router(),
+      auth = new Auth(),
       tokens = auth.tokens(),
       templates = new EmailTemplates(db),
       email = new Emailer(),
@@ -28,7 +29,10 @@ module.exports = function(app, express, db) {
   }));
 
   router.get("/email", function (req, res, next) {
-    res.render("email", {user: JSON.stringify(req.user), templates: req.user.templates});
+    var callback = function(result) {
+      res.render("email", {user: JSON.stringify(req.user), templates: result.templates});
+    };
+    findUser(req.user, callback);
   });
 
   router.post("/send", upload.single("attachment"), function (req, res, next) {
@@ -36,22 +40,29 @@ module.exports = function(app, express, db) {
     res.redirect("/");
   });
 
-  router.get("/templates", function (req, res, next) {
-    res.render("templates", {templates: req.user.templates, schedules: req.user.schedules});
+  router.get("/campaigns/new", function (req, res, next) {
+    var callback = function(result) {
+      res.render("new-campaign", {templates: result.templates, schedules: result.schedules});
+    };
+    findUser(req.user, callback);
   });
 
-  router.post("/newtemplate", function (req, res, next) {
+  router.post("/new-template", function (req, res, next) {
     templates.newTemplate(req.body, req.user);
-    res.redirect("/templates");
+    res.redirect("/campaigns/new");
   });
 
-  router.post("/launchcampaign", function (req, res, next) {
+  router.post("/launch-campaign", function (req, res, next) {
     campaigns.launchCampaign(req.user, req.body, tokens);
-    res.redirect("/templates");
+    res.redirect("/campaigns/new");
   });
 
   router.get("/schedules", function (req, res, next) {
-    res.render("schedules", {schedules: req.user.schedules});
+    // var user = findUser(req.user);
+    var callback = function(result) {
+      res.render("schedules", {schedules: result.schedules});
+    };
+    findUser(req.user, callback);
   });
 
   router.post("/newschedule", function (req, res, next) {
@@ -61,6 +72,14 @@ module.exports = function(app, express, db) {
   });
 
   app.use("/", router);
+
+  function findUser(user, callback) {
+    db.collection("users").findOne({"googleId": user.googleId}, function(err, result) {
+      if(err) throw err;
+      // return result;
+      callback(result);
+    });
+  }
 };
 
 
