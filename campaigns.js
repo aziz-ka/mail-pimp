@@ -73,7 +73,6 @@ module.exports = function(db) {
       }
     }
     var timeSlot = user.schedules[scheduleIdx].timeSlots;
-    console.log(util.inspect(timeSlot));
 
     while(keepGoing) {
       // if timeSlot is empty move on to next one
@@ -81,11 +80,8 @@ module.exports = function(db) {
         var nextTimeSlot = moment().day(dayOfWeek + count2).hour(timeSlot[dayOfWeek + count1].substr(0, 2)).minute(0);
         var timeDiff = now.diff(nextTimeSlot);
         if(timeDiff < 0 && !daysFromNow) {
-          console.log("TIMEDIFF " + timeDiff);
-          console.log("SCHEDULEINDEX " + scheduleIdx);
-          console.log("COUNT1 " + count1);
-          console.log("COUNT2 " + count2);
-          that.addToQueue(user, templateName, Math.abs(timeDiff / 100000), tokens);
+          // * 6 / 8640 converts daysFromNow in ms into minutes ms
+          that.addToQueue(user, templateName, Math.abs(timeDiff * 6 / 8640), tokens);
           keepGoing = false;
           break;
         }

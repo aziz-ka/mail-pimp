@@ -18,7 +18,7 @@ gulp.task('develop', function () {
   livereload.listen();
   nodemon({
     script: 'bin/www',
-    ext: 'js handlebars coffee',
+    ext: 'js hb coffee',
     stdout: false
   }).on('readable', function () {
     this.stdout.on('data', function (chunk) {

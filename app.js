@@ -8,6 +8,7 @@ var express = require('express'),
     session = require("express-session"),
     app = express(),
     MongoClient = require("mongodb").MongoClient,
+    MongoConnect = require("connect-mongo")(session),
     config = require("./config.js"),
     Auth = require("./auth.js"),
     auth = new Auth();
@@ -49,18 +50,6 @@ MongoClient.connect(config.dbUrl, function(err, db) {
   app.use(cookieParser());
   app.use(express.static(path.join(__dirname, 'public')));
 
-  app.use(session({secret: "secret"}));
-
-  auth.auth(app, db);
-  require('./routes/routes')(app, express, db);
-
-  // catch 404 and forward to error handler
-  app.use(function(req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
-  });
-
   // development error handler; will print stacktrace
   if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
@@ -71,19 +60,34 @@ MongoClient.connect(config.dbUrl, function(err, db) {
         title: 'error'
       });
     });
+
+    app.use(session({secret: config.sessionSecret}));
+  } else {
+    // production error handler; no stacktraces leaked to user
+    app.use(function(err, req, res, next) {
+      res.status(err.status || 500);
+      res.render('error', {
+        message: err.message,
+        error: {},
+        title: 'error'
+      });
+    });
+
+    app.use(session({
+      secret: config.sessionSecret,
+      store: new MongoConnect({db: db, stringify: true})
+    }));
   }
 
-  // production error handler; no stacktraces leaked to user
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: {},
-      title: 'error'
-    });
+  auth.auth(app, db);
+  require('./routes/routes')(app, express, db);
+
+  // catch 404 and forward to error handler
+  app.use(function(req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
   });
-
-  module.exports = app;
-
-  app.listen(3000);
 });
+
+module.exports = app;

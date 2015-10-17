@@ -53,7 +53,7 @@
 
 <script>
   var user = {{{user}}};
-  console.log(user);
+  // console.log(user);
   var subjectField = $("input[name='subject']");
   var messageField = $("textarea");
 

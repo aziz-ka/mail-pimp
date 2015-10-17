@@ -4,7 +4,7 @@ var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy,
     credentials = require("./private/settings.json"),
     clientID = credentials.google.clientID,
     clientSecret = credentials.google.clientSecret,
-    callbackURL = credentials.google.callbackURL,
+    callbackURL = process.env.NODE_ENV === "development" ? credentials.google.localCallbackURL : credentials.google.AWSCallbackURL,
     OAuth2 = require("googleapis").auth.OAuth2,
     oauth2Client = new OAuth2(clientID, clientSecret, callbackURL);
 

@@ -37,7 +37,7 @@ module.exports = function(app, express, db) {
 
   router.post("/send", upload.single("attachment"), function (req, res, next) {
     email.encodeMessage(req.body, req.file, tokens);
-    res.redirect("/");
+    res.redirect("/email");
   });
 
   router.get("/campaigns/new", function (req, res, next) {
