@@ -1,5 +1,5 @@
 {{> navbar}}
-<div class="container">
+<div class="container-fluid">
   <div class="row">
     <div class="col-xs-12 col-sm-6">
       <h2>New campaign</h2>
@@ -99,6 +99,19 @@
 </div>
 
 <script>
+  // var schedules = {{{schedulesJSON}}}
+  // console.log(schedules);
+  // $("select[name='schedule']").change(function(e) {
+  //   var pickedSchedule = e.target.selectedIndex;
+  //   var schedule = temp1[pickedSchedule - 1];
+  //   console.log(temp1[pickedSchedule - 1]);
+  //   for(var keys in schedule.timeSlots) {
+  //     if(schedule.timeSlots[keys]) {
+  //       console.log(keys, schedule.timeSlots[keys]);
+  //     }
+  //   }
+  // })
+
   $(".new-touch").click(function(e) {
     e.preventDefault();
     var touches = $(".touches");

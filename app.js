@@ -9,6 +9,7 @@ var express = require('express'),
     app = express(),
     MongoClient = require("mongodb").MongoClient,
     MongoConnect = require("connect-mongo")(session),
+    moment = require("moment"),
     config = require("./config.js"),
     Auth = require("./auth.js"),
     auth = new Auth();
@@ -34,6 +35,9 @@ MongoClient.connect(config.dbUrl, function(err, db) {
         if(dayNum == "4") return "Thursday";
         if(dayNum == "5") return "Friday";
         if(dayNum == "6") return "Saturday";
+      },
+      dateFormat: function(date) {
+        return moment(date).format("MMM DD, YYYY");
       }
     }
   });

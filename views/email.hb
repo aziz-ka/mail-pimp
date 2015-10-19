@@ -1,5 +1,5 @@
 {{> navbar}}
-<div class="container">
+<div class="container-fluid">
   <div class="row">
     <h1 class="col-xs-12">Send email
       <a href="/campaigns/new" class="btn btn-link pull-right"><span class="glyphicon glyphicon-plus"></span>&nbsp;New template</a>

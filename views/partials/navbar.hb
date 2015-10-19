@@ -10,7 +10,8 @@
 
     <div class="collapse navbar-collapse" id="navbar-body">
       <ul class="nav navbar-nav">
-        <li><a href="/campaigns/new">Campaigns</a></li>
+        <li><a href="/campaigns">Campaigns</a></li>
+        <li><a href="/leads">Leads</a></li>
         <li><a href="/schedules">Schedules</a></li>
         <li><a href="/email">Email</a></li>
       </ul>
