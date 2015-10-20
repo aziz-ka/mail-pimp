@@ -1,5 +1,7 @@
+var config = require("./config.js")();
+
 module.exports = function(db) {
-  var users = db.collection("users");
+  var users = db.collection(config.users);
 
   this.newTemplate = function(template, user) {
     var templateModel = {
@@ -14,7 +16,6 @@ module.exports = function(db) {
   this.getTemplates = function(user) {
     users.findOne({"googleId": user.googleId}, function(err, user) {
       if(err) return err;
-      // callback(err, user);
       return user;
     });
   };

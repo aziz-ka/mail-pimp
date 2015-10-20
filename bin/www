@@ -1,10 +1,11 @@
 #!/usr/bin/env node
-var app = require('../app');
-var env = process.env.NODE_ENV || 'development';
+var config = require("../config.js")();
+var app = require("." + config.appJS);
+var env = config.env;
 
-app.set('port', process.env.PORT || 3000);
+app.set("port", config.port);
 
-var server = app.listen(app.get('port'), function() {
+var server = app.listen(app.get("port"), function() {
   console.log("running on port " + server.address().port);
   console.log(env + " mode");
 });

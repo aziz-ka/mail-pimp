@@ -14,6 +14,10 @@
 </head>
 <body>
 
+  {{#if user}}
+    {{> navbar}}
+  {{/if}}
+
   {{{body}}}
 
 </body>

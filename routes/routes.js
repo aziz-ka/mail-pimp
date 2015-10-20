@@ -1,13 +1,14 @@
 var multer = require("multer"),
-    upload = multer({dest:'./uploads/'}),
+    config = require("../config.js")(),
+    upload = multer({dest: config.uploadsDir}),
     passport = require("passport"),
-    scopes = ["https://www.googleapis.com/auth/userinfo.email", "https://mail.google.com"],
-    Auth = require("../auth.js"),
-    EmailTemplates = require("../templates.js"),
-    Emailer = require("../email.js"),
-    Campaigns = require("../campaigns.js"),
-    Leads = require("../leads.js"),
-    Schedules = require("../schedules.js");
+    scopes = config.googleScopes,
+    Auth = require("." + config.authJS),
+    EmailTemplates = require("." + config.emailTemplatesJS),
+    Emailer = require("." + config.emailJS),
+    Campaigns = require("." + config.campaignsJS),
+    Leads = require("." + config.leadsJS),
+    Schedules = require("." + config.schedulesJS);
 
 module.exports = function(app, express, db) {
   var router = express.Router(),
@@ -19,37 +20,37 @@ module.exports = function(app, express, db) {
       leads = new Leads(db),
       schedules = new Schedules(db);
 
-  router.get('/', function (req, res) {
-    res.render('index', { title: 'Contactly Emailer' });
+  router.get(config.indexRoute, function (req, res) {
+    res.render('index', { title: "Contactly MailPimp", user: req.user});
   });
 
-  router.get("/auth/google", passport.authenticate("google", {scope: scopes, accessType: "offline"}));
+  router.get(config.googleAuth, passport.authenticate("google", {scope: scopes, accessType: "offline"}));
 
-  router.get("/auth/google/callback", passport.authenticate("google", {
-    successRedirect: "/email",
-    failureRedirect: "/"
+  router.get(config.googleAuthCB, passport.authenticate("google", {
+    successRedirect: config.campaignsRoute,
+    failureRedirect: config.indexRoute
   }));
 
-  router.get("/email", function (req, res, next) {
+  router.get(config.emailRoute, function (req, res, next) {
     var callback = function(result) {
-      res.render("email", {user: JSON.stringify(req.user), templates: result.templates});
+      res.render("email", {userJSON: JSON.stringify(req.user), templates: result.templates});
     };
     findUser(req.user, callback);
   });
 
-  router.post("/send", upload.single("attachment"), function (req, res, next) {
+  router.post(config.sendEmailRoute, upload.single("attachment"), function (req, res, next) {
     email.encodeMessage(req.body, req.file, tokens);
-    res.redirect("/email");
+    res.redirect(config.emailRoute);
   });
 
-  router.get("/campaigns", function (req, res, next) {
+  router.get(config.campaignsRoute, function (req, res, next) {
     var callback = function(result) {
       res.render("campaigns", {campaigns: result.campaigns});
     };
     findUser(req.user, callback);
   });
 
-  router.get("/campaigns/new", function (req, res, next) {
+  router.get(config.newCampaignRoute, function (req, res, next) {
     var callback = function(result) {
       res.render("new-campaign", {
         templates: result.templates,
@@ -60,49 +61,46 @@ module.exports = function(app, express, db) {
     findUser(req.user, callback);
   });
 
-  router.post("/new-template", function (req, res, next) {
+  router.post(config.newTemplateRoute, function (req, res, next) {
     templates.newTemplate(req.body, req.user);
-    res.redirect("/campaigns/new");
+    res.redirect(config.newCampaignRoute);
   });
 
-  router.post("/launch-campaign", function (req, res, next) {
+  router.post(config.launchCampaignRoute, function (req, res, next) {
     campaigns.launchCampaign(req.user, req.body, tokens);
-    res.redirect("/campaigns/new");
+    res.redirect(config.campaignsRoute);
   });
 
-  router.get("/leads", function (req, res, next) {
+  router.get(config.leadsRoute, function (req, res, next) {
     var callback = function(result) {
       res.render("leads", {leads: result.leads});
     };
     findUser(req.user, callback);
   });
 
-  router.post("/leads/new", function (req, res, next) {
+  router.post(config.newLeadRoute, function (req, res, next) {
     console.log(req.body);
     leads.newLead(req.user, req.body);
     res.end();
   });
 
-  router.get("/schedules", function (req, res, next) {
-    // var user = findUser(req.user);
+  router.get(config.schedulesRoute, function (req, res, next) {
     var callback = function(result) {
       res.render("schedules", {schedules: result.schedules});
     };
     findUser(req.user, callback);
   });
 
-  router.post("/newschedule", function (req, res, next) {
-    console.log(req.body);
+  router.post(config.newScheduleRoute, function (req, res, next) {
     schedules.newSchedule(req.user, req.body);
-    res.redirect("/schedules");
+    res.redirect(config.schedulesRoute);
   });
 
-  app.use("/", router);
+  app.use(config.indexRoute, router);
 
   function findUser(user, callback) {
-    db.collection("users").findOne({"googleId": user.googleId}, function(err, result) {
+    db.collection(config.users).findOne({"googleId": user.googleId}, function(err, result) {
       if(err) throw err;
-      // return result;
       callback(result);
     });
   }

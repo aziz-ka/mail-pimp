@@ -10,22 +10,21 @@ var express = require('express'),
     MongoClient = require("mongodb").MongoClient,
     MongoConnect = require("connect-mongo")(session),
     moment = require("moment"),
-    config = require("./config.js"),
-    Auth = require("./auth.js"),
+    config = require("./config.js")(),
+    Auth = require(config.authJS),
     auth = new Auth();
 
 MongoClient.connect(config.dbUrl, function(err, db) {
   if(err) throw err;
 
-  var env = process.env.NODE_ENV || 'development';
-  app.locals.ENV = env;
-  app.locals.ENV_DEVELOPMENT = env == 'development';
+  app.locals.ENV = config.env;
+  app.locals.ENV_DEVELOPMENT = config.env == config.devEnv;
 
   // view engine setup
   var hbs = handlebars.create({
-    extname: '.hb',
-    defaultLayout: 'main',
-    partialsDir: ['views/partials/'],
+    extname: '.' + config.HBExtName,
+    defaultLayout: config.HBDefaultLayout,
+    partialsDir: [config.HBPartialsDir],
     helpers: {
       dayOfWeek: function(dayNum) {
         if(dayNum == "0") return "Sunday";
@@ -41,9 +40,9 @@ MongoClient.connect(config.dbUrl, function(err, db) {
       }
     }
   });
-  app.engine('hb', hbs.engine);
-  app.set('views', path.join(__dirname, 'views'));
-  app.set('view engine', 'hb');
+  app.engine(config.HBExtName, hbs.engine);
+  app.set('views', path.join(__dirname, config.viewsDir));
+  app.set('view engine', config.HBExtName);
 
   // app.use(favicon(__dirname + '/public/img/favicon.ico'));
   app.use(logger('dev'));
@@ -52,16 +51,16 @@ MongoClient.connect(config.dbUrl, function(err, db) {
     extended: true
   }));
   app.use(cookieParser());
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.static(path.join(__dirname, config.publicDir)));
 
   // development error handler; will print stacktrace
-  if (app.get('env') === 'development') {
+  if (app.get('env') === config.devEnv) {
     app.use(function(err, req, res, next) {
       res.status(err.status || 500);
-      res.render('error', {
+      res.render(config.errorView, {
         message: err.message,
         error: err,
-        title: 'error'
+        title: config.errorTitle
       });
     });
 
@@ -70,10 +69,10 @@ MongoClient.connect(config.dbUrl, function(err, db) {
     // production error handler; no stacktraces leaked to user
     app.use(function(err, req, res, next) {
       res.status(err.status || 500);
-      res.render('error', {
+      res.render(config.errorView, {
         message: err.message,
         error: {},
-        title: 'error'
+        title: config.errorTitle
       });
     });
 
@@ -84,7 +83,7 @@ MongoClient.connect(config.dbUrl, function(err, db) {
   }
 
   auth.auth(app, db);
-  require('./routes/routes')(app, express, db);
+  require(config.routesJS)(app, express, db);
 
   // catch 404 and forward to error handler
   app.use(function(req, res, next) {

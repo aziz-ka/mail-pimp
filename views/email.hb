@@ -2,7 +2,7 @@
 <div class="container-fluid">
   <div class="row">
     <h1 class="col-xs-12">Send email
-      <a href="/campaigns/new" class="btn btn-link pull-right"><span class="glyphicon glyphicon-plus"></span>&nbsp;New template</a>
+      <button type="button" class="btn btn-link pull-right" data-toggle="modal" data-target="#new-template"><span class="glyphicon glyphicon-plus"></span>&nbsp;New template</button>
     </h1>
     <div class="col-xs-12">
       <form method="post" action="/send" enctype="multipart/form-data">
@@ -49,10 +49,12 @@
       </form>
     </div>
   </div>
+
+  {{> new-email-template}}  
 </div>
 
 <script>
-  var user = {{{user}}};
+  var user = {{{userJSON}}};
   // console.log(user);
   var subjectField = $("input[name='subject']");
   var messageField = $("textarea");

@@ -1,27 +1,28 @@
-var gulp = require('gulp'),
-  nodemon = require('gulp-nodemon'),
-  plumber = require('gulp-plumber'),
-  livereload = require('gulp-livereload'),
-  sass = require('gulp-ruby-sass');
+var gulp = require("gulp"),
+    nodemon = require("gulp-nodemon"),
+    plumber = require("gulp-plumber"),
+    livereload = require("gulp-livereload"),
+    sass = require("gulp-ruby-sass"),
+    config = require("./config.js")();
 
-gulp.task('sass', function () {
-  return sass('./public/css/')
-    .pipe(gulp.dest('./public/css'))
+gulp.task("sass", function () {
+  return sass(config.stylesDir)
+    .pipe(gulp.dest(config.stylesDir))
     .pipe(livereload());
 });
 
-gulp.task('watch', function() {
-  gulp.watch('./public/css/*.scss', ['sass']);
+gulp.task("watch", function() {
+  gulp.watch(config.allStyles, ["sass"]);
 });
 
-gulp.task('develop', function () {
+gulp.task("develop", function () {
   livereload.listen();
   nodemon({
-    script: 'bin/www',
-    ext: 'js hb coffee',
+    script: "bin/www",
+    ext: "js hb coffee",
     stdout: false
-  }).on('readable', function () {
-    this.stdout.on('data', function (chunk) {
+  }).on("readable", function () {
+    this.stdout.on("data", function (chunk) {
       if(/^Express server listening on port/.test(chunk)){
         livereload.changed(__dirname);
       }
@@ -31,8 +32,8 @@ gulp.task('develop', function () {
   });
 });
 
-gulp.task('default', [
-  'sass',
-  'develop',
-  'watch'
+gulp.task("default", [
+  "sass",
+  "develop",
+  "watch"
 ]);

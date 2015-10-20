@@ -1,9 +1,10 @@
-var Emailer = require("./email.js"),
+var config = require("./config.js")(),
+    Emailer = require(config.emailJS),
     moment = require("moment"),
     util = require("util");
 
 module.exports = function(db) {
-  var users = db.collection("users"),
+  var users = db.collection(config.users),
       email = new Emailer();
 
   this.launchCampaign = function(user, body, tokens) {

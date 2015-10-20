@@ -1,17 +1,17 @@
 var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy,
     passport = require("passport"),
     chalk = require("chalk"),
-    credentials = require("./private/settings.json"),
+    config = require("./config.js")(),
+    credentials = require(config.settings),
     clientID = credentials.google.clientID,
     clientSecret = credentials.google.clientSecret,
-    env = process.env.NODE_ENV || "development",
-    callbackURL = env === "development" ? credentials.google.localCallbackURL : credentials.google.AWSCallbackURL,
+    callbackURL = config.env === config.devEnv ? credentials.google.localCallbackURL : credentials.google.AWSCallbackURL,
     OAuth2 = require("googleapis").auth.OAuth2,
     oauth2Client = new OAuth2(clientID, clientSecret, callbackURL);
 
 module.exports = function() {
   this.auth = function(app, db) {
-    var users = db.collection("users");
+    var users = db.collection(config.users);
 
     app.use(passport.initialize());
     app.use(passport.session());

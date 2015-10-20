@@ -1,5 +1,7 @@
+var config = require("./config.js")();
+
 module.exports = function(db) {
-  var users = db.collection("users");
+  var users = db.collection(config.users);
 
   this.newSchedule = function(user, body) {
     var scheduleModel = {

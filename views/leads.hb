@@ -1,4 +1,5 @@
 {{> navbar}}
+<br><br>
 <div class="container-fluid">
   <div class="row">
     <div class="col-xs-12">
@@ -17,7 +18,7 @@
           <tbody>
             <tr>
               <form action="/leads/new" method="post">
-                <td><button class="btn btn-default" type="submit" style="padding: 2px 6px; font-size: 12px;"><span class="glyphicon glyphicon-save"></span></button></td>
+                <td class="text-center"><button class="btn btn-default" type="submit" style="padding: 2px 6px; font-size: 12px;"><span class="glyphicon glyphicon-save"></span></button></td>
                 <td><input type="email" name="email" placeholder="john.smith@email.com" required></td>
                 <td><input type="text" name="firstName" placeholder="John"></td>
                 <td><input type="text" name="lastName" placeholder="Smith"></td>

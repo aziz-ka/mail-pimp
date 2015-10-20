@@ -79,10 +79,10 @@ module.exports = function() {
     console.log(chalk.bgCyan(msgEncoded));
 
     gmail.users.messages.send({
-      "auth": tokens,
-      "userId": "me",
-      "resource": {
-        "raw": msgEncoded
+      auth: tokens,
+      userId: "me",
+      resource: {
+        raw: msgEncoded
       }
     }, processEmail);
   }

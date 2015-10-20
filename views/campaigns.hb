@@ -9,7 +9,7 @@
       <div class="table-responsive">
         <table class="table">
           <thead>
-            <tr>
+            <tr class="active">
               <th>Name</th>
               <th>Created</th>
             </tr>
