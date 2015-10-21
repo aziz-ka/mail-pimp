@@ -21,7 +21,7 @@ module.exports = function(app, express, db) {
       schedules = new Schedules(db);
 
   router.get(config.indexRoute, function (req, res) {
-    res.render('index', { title: "Contactly MailPimp", user: req.user});
+    res.render('index', { title: "Contactly MailPimp", user: req.user, config: config});
   });
 
   router.get(config.googleAuth, passport.authenticate("google", {scope: scopes, accessType: "offline"}));
@@ -33,7 +33,7 @@ module.exports = function(app, express, db) {
 
   router.get(config.emailRoute, function (req, res, next) {
     var callback = function(result) {
-      res.render("email", {userJSON: JSON.stringify(req.user), templates: result.templates});
+      res.render("email", {userJSON: JSON.stringify(req.user), templates: result.templates, config: config});
     };
     findUser(req.user, callback);
   });
@@ -43,9 +43,14 @@ module.exports = function(app, express, db) {
     res.redirect(config.emailRoute);
   });
 
+  router.post(config.newTemplateRoute, function (req, res, next) {
+    templates.newTemplate(req.body, req.user);
+    res.redirect(config.newCampaignRoute);
+  });
+
   router.get(config.campaignsRoute, function (req, res, next) {
     var callback = function(result) {
-      res.render("campaigns", {campaigns: result.campaigns});
+      res.render("campaigns", {campaigns: result.campaigns, config: config});
     };
     findUser(req.user, callback);
   });
@@ -55,15 +60,11 @@ module.exports = function(app, express, db) {
       res.render("new-campaign", {
         templates: result.templates,
         schedules: result.schedules,
-        schedulesJSON: JSON.stringify(result.schedules)
+        schedulesJSON: JSON.stringify(result.schedules),
+        config: config
       });
     };
     findUser(req.user, callback);
-  });
-
-  router.post(config.newTemplateRoute, function (req, res, next) {
-    templates.newTemplate(req.body, req.user);
-    res.redirect(config.newCampaignRoute);
   });
 
   router.post(config.launchCampaignRoute, function (req, res, next) {
@@ -73,7 +74,7 @@ module.exports = function(app, express, db) {
 
   router.get(config.leadsRoute, function (req, res, next) {
     var callback = function(result) {
-      res.render("leads", {leads: result.leads});
+      res.render("leads", {leads: result.leads, config: config});
     };
     findUser(req.user, callback);
   });
@@ -86,7 +87,7 @@ module.exports = function(app, express, db) {
 
   router.get(config.schedulesRoute, function (req, res, next) {
     var callback = function(result) {
-      res.render("schedules", {schedules: result.schedules});
+      res.render("schedules", {schedules: result.schedules, config: config});
     };
     findUser(req.user, callback);
   });

@@ -150,22 +150,23 @@ module.exports = function(db) {
         }
       }
 
-      // push emails of leads who have neither replied nor opted out yet into silentLeads array
       // ToDo: add campaign field to leads
+      
+      // push emails of leads who have neither replied nor opted out yet into silentLeads array
       for (var j = 0; j < user.leads.length; j++) {
         if(!user.leads[j].results.replied && !user.leads[j].results.optedOut) {
-          silentLeads.push(user.leads[j].email);
+          // silentLeads.push(user.leads[j].email);
+          var emailAgain = {
+            address: user.leads[j].email,
+            subject: subject,
+            message: body
+          };
+
+          // ToDo: regenerate tokens?
+          email.encodeMessage(emailAgain, null, tokens);
         }
       }
 
-      var emailAgain = {
-        address: silentLeads,
-        subject: subject,
-        message: body
-      };
-
-      // ToDo: regenerate tokens?
-      email.encodeMessage(emailAgain, null, tokens);
     }
   };
 };

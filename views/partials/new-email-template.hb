@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-body">
         <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
-        <form action="/new-template" method="post">
+        <form action="{{config.newTemplateRoute}}" method="post">
           <div class="form-group">
             <label for="name">Template name</label>
             <input type="text" name="name" class="form-control" required>

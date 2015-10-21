@@ -4,7 +4,7 @@
     <div class="col-xs-12 col-sm-6">
       <h2>New campaign</h2>
       <br>
-      <form action="/launch-campaign" method="post" class="form-horizontal">
+      <form action="{{config.launchCampaignRoute}}" method="post" class="form-horizontal">
         <div class="form-group">
           <label for="capmaignName" class="control-label col-xs-4">Campaign name</label>
           <div class="col-xs-8">

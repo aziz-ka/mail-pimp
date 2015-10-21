@@ -4,7 +4,7 @@
     <div class="col-xs-12 col-sm-6">
       <h2>New schedule</h2>
       <br>
-      <form action="schedules/new" method="post" class="form-horizontal">
+      <form action="{{config.newScheduleRoute}}" method="post" class="form-horizontal">
         <div class="form-group">
           <label for="scheduleName" class="control-label col-xs-4">Name</label>
           <div class="col-xs-8">

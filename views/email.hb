@@ -5,13 +5,13 @@
       <button type="button" class="btn btn-link pull-right" data-toggle="modal" data-target="#new-template"><span class="glyphicon glyphicon-plus"></span>&nbsp;New template</button>
     </h1>
     <div class="col-xs-12">
-      <form method="post" action="/send" enctype="multipart/form-data">
+      <form method="post" action="{{config.sendEmailRoute}}" enctype="multipart/form-data">
         <div class="form-group">
           <label for="address">Email</label>
           <input type="email" name="address" class="form-control" multiple required>
         </div>
         <div class="form-group">
-          <label for="templates">Templates</label>
+          <label for="templates">Template</label>
           <select name="templates" id="" class="form-control">
             <option value="null"></option>
             {{#each templates}}

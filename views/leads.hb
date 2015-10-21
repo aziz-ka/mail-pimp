@@ -17,7 +17,7 @@
           </thead>
           <tbody>
             <tr>
-              <form action="/leads/new" method="post">
+              <form action="{{config.newLeadRoute}}" method="post">
                 <td class="text-center"><button class="btn btn-default" type="submit" style="padding: 2px 6px; font-size: 12px;"><span class="glyphicon glyphicon-save"></span></button></td>
                 <td><input type="email" name="email" placeholder="john.smith@email.com" required></td>
                 <td><input type="text" name="firstName" placeholder="John"></td>
@@ -62,7 +62,7 @@
 
     $.ajax({
       type: "POST",
-      url: "/leads/new",
+      url: "{{config.newLeadRoute}}",
       data: leadInfo,
     }).done(function(data) {
       console.log(data);

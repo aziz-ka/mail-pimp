@@ -2,8 +2,9 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-xs-12">
+    <br>
       <div class="text-right">
-        <a href="/campaigns/new" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus"></span>&nbsp;New campaign</a>
+        <a href="{{config.newCampaignRoute}}" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus"></span>&nbsp;New campaign</a>
       </div>
       <br>
       <div class="table-responsive">
