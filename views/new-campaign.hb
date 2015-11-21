@@ -51,11 +51,15 @@
       <br>
       {{#each templates}}
         <div class="panel panel-default">
-          <div class="panel-heading"><strong>{{this.name}}</strong></div>
+          <div class="panel-heading">
+            <strong>{{this.name}}</strong>
+            <span class="glyphicon glyphicon-trash pull-right"></span>
+            <span class="glyphicon glyphicon-edit pull-right">&nbsp;</span>
+          </div>
           <div class="panel-body">{{this.subject}}</div>
         </div>
       {{/each}}
-      <button type="button" class="btn btn-link pull-right" data-toggle="modal" data-target="#new-template"><span class="glyphicon glyphicon-plus"></span>&nbsp;New Template</button>
+      <button type="button" class="btn btn-link pull-right new-template" data-toggle="modal" data-target="#new-template"><span class="glyphicon glyphicon-plus"></span>&nbsp;New Template</button>
     </div>
   </div>
 
@@ -63,43 +67,77 @@
 </div>
 
 <script>
-  // var schedules = {{{schedulesJSON}}}
-  // console.log(schedules);
-  // $("select[name='schedule']").change(function(e) {
-  //   var pickedSchedule = e.target.selectedIndex;
-  //   var schedule = temp1[pickedSchedule - 1];
-  //   console.log(temp1[pickedSchedule - 1]);
-  //   for(var keys in schedule.timeSlots) {
-  //     if(schedule.timeSlots[keys]) {
-  //       console.log(keys, schedule.timeSlots[keys]);
-  //     }
-  //   }
-  // })
+  var templates = {{{templatesJSON}}};
 
-  $(".new-touch").click(function(e) {
+  $(document).on("click", ".glyphicon-edit", function(e) {
+    $(".modal").modal("show");
+    var templateName = $(this).prev().prev().text(),
+        nameField = $(".modal input[name='name']"),
+        subjectField = $(".modal input[name='subject']"),
+        messageField = $(".modal textarea");
+
+    nameField.val(templateName).attr("disabled", "true");
+
+    for (var i = 0; i < templates.length; i++) {
+      if(templates[i].name === templateName) {
+        subjectField.val(templates[i].subject);
+        messageField.val(templates[i].body);
+        break;
+      }
+    };
+  });
+
+  $(document).on("click", ".glyphicon-trash", function(e) {
+    var templateName = $(this).prev().text();
+
+    $.ajax({
+      type: "POST",
+      url: "{{config.removeTemplateRoute}}",
+      data: {templateName: templateName}
+    }).done();
+
+    $(this).parent().parent().remove();
+  });
+
+  $(document).on("click", ".new-template", function(e) {
+    $(".modal input, .modal textarea").removeAttr("disabled").val("");
+  });
+
+  $(document).on("click", ".new-touch", function(e) {
     e.preventDefault();
-    var touches = $(".touches");
-    var form = $(".form-horizontal");
-    var lastTouch = touches.length;
-    var oldClass = "touch-" + lastTouch.toString();
-    var newClass = "touch-" + (lastTouch + 1).toString();
+
+    var touches = $(".touches"),
+        form = $(".form-horizontal"),
+        lastTouch = touches.length,
+        oldClass = "touch-" + lastTouch.toString(),
+        newClass = "touch-" + (lastTouch + 1).toString();
+
     touches.last().clone().removeClass(oldClass).addClass(newClass).insertAfter(touches.last());
 
     var noReplyDays = $(".noReplyDays");
     noReplyDays.removeClass("hidden");
     noReplyDays.last().addClass("hidden");
 
-    var noReplyDaysInput = $("input[name='noReplyDays']");
+    var noReplyDaysInput = $("input[name=noReplyDays]");
     noReplyDaysInput.attr("required", "true");
     noReplyDaysInput.last().removeAttr("required");
 
-    var label = $("label[for='touch']");
+    var label = $("label[for=touch]"),
+        removeBtn = '<a class="btn btn-link">&times;</a>';
+
     label.last().text(newClass.replace("-", " ").replace("t", "T"));
+    $(removeBtn).prependTo(label.last());
   });
 
-  $(".panel-body span").click(function(e) {
-    var messageField = $("textarea");
-    var insert = $(this).text();
+  $(document).on("click", "label a.btn", function(e) {
+    this.parentNode.parentNode.parentNode.remove();
+    $(".noReplyDays").last().addClass("hidden");
+  });
+
+  $(document).on("click", ".panel-body span", function(e) {
+    var messageField = $("textarea"),
+        insert = $(this).text();
+
     messageField.val(messageField.val() + insert);
   });
 </script>

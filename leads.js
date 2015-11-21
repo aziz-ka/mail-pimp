@@ -20,4 +20,8 @@ module.exports = function(db) {
 
     users.update({"googleId": user.googleId}, {$addToSet: {"leads": leadModel}});
   };
+
+  this.removeLead = function(user, body) {
+    users.update({"googleId": user.googleId}, {$pull: {"leads": {"email": body.email}}});
+  }
 };

@@ -43,14 +43,17 @@ module.exports = function() {
     indexRoute: "/",
     emailRoute: "/email",
     newTemplateRoute: "/new-template",
+    removeTemplateRoute: "/remove-template",
     sendEmailRoute: "/send",
     campaignsRoute: "/campaigns",
     newCampaignRoute: "/campaigns/new",
-    launchCampaignRoute: "/launch-campaign",
+    launchCampaignRoute: "/campaigns/launch",
     leadsRoute: "/leads",
     newLeadRoute: "/leads/new",
+    removeLeadRoute: "/leads/remove",
     schedulesRoute: "/schedules",
     newScheduleRoute: "/schedules/new",
+    removeScheduleRoute: "/schedules/remove",
     // gulpfile.js
     allStyles: stylesDir + "/*.scss",
   };

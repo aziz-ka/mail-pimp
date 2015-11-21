@@ -21,7 +21,7 @@ module.exports = function(app, express, db) {
       schedules = new Schedules(db);
 
   router.get(config.indexRoute, function (req, res) {
-    res.render('index', { title: "Contactly MailPimp", user: req.user, config: config});
+    res.render('index', { title: "MailPimp", user: req.user, config: config});
   });
 
   router.get(config.googleAuth, passport.authenticate("google", {scope: scopes, accessType: "offline"}));
@@ -44,8 +44,13 @@ module.exports = function(app, express, db) {
   });
 
   router.post(config.newTemplateRoute, function (req, res, next) {
-    templates.newTemplate(req.body, req.user);
-    res.redirect(config.newCampaignRoute);
+    templates.newTemplate(req.user, req.body);
+    res.end();
+  });
+
+  router.post(config.removeTemplateRoute, function (req, res, next) {
+    templates.removeTemplate(req.user, req.body);
+    res.end();
   });
 
   router.get(config.campaignsRoute, function (req, res, next) {
@@ -60,7 +65,7 @@ module.exports = function(app, express, db) {
       res.render("new-campaign", {
         templates: result.templates,
         schedules: result.schedules,
-        schedulesJSON: JSON.stringify(result.schedules),
+        templatesJSON: JSON.stringify(result.templates),
         config: config
       });
     };
@@ -80,21 +85,30 @@ module.exports = function(app, express, db) {
   });
 
   router.post(config.newLeadRoute, function (req, res, next) {
-    console.log(req.body);
     leads.newLead(req.user, req.body);
+    res.end();
+  });
+
+  router.post(config.removeLeadRoute, function (req, res, next) {
+    leads.removeLead(req.user, req.body);
     res.end();
   });
 
   router.get(config.schedulesRoute, function (req, res, next) {
     var callback = function(result) {
-      res.render("schedules", {schedules: result.schedules, config: config});
+      res.render("schedules", {schedules: result.schedules, schedulesJSON: JSON.stringify(result.schedules), config: config});
     };
     findUser(req.user, callback);
   });
 
   router.post(config.newScheduleRoute, function (req, res, next) {
     schedules.newSchedule(req.user, req.body);
-    res.redirect(config.schedulesRoute);
+    res.end();
+  });
+
+  router.post(config.removeScheduleRoute, function (req, res, next) {
+    schedules.removeSchedule(req.user, req.body);
+    res.end();
   });
 
   app.use(config.indexRoute, router);

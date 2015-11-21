@@ -1,11 +1,11 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-body">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-body" style="padding: 6px 8px;">
         <span class="sr-only">Toggle navigation menu</span>
         <span class="glyphicon glyphicon-menu-hamburger"></span>
       </button>
-      <a href="/" class="navbar-brand">Contactly</a>
+      <a href="/" class="navbar-brand">MailPimp</a>
     </div>
 
     <div class="collapse navbar-collapse" id="navbar-body">

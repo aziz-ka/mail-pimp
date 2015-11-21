@@ -20,9 +20,10 @@
           <div class="panel panel-default">
             <br>
             <div class="panel-body">
+              <p></p>
               <span class="text-primary">&lcub;&lcub;first_name&rcub;&rcub;</span><br>
               <span class="text-primary">&lcub;&lcub;last_name&rcub;&rcub;</span><br>
-              <span class="text-primary">&lcub;&lcub;company_name&rcub;&rcub;</span><br>
+              <span class="text-primary">&lcub;&lcub;company&rcub;&rcub;</span><br>
               <span class="text-primary">&lcub;&lcub;email&rcub;&rcub;</span><br>
               <span class="text-primary">&lcub;&lcub;address&rcub;&rcub;</span><br>
               <span class="text-primary">&lcub;&lcub;phone&rcub;&rcub;</span><br>
@@ -35,3 +36,25 @@
     </div>
   </div>
 </div>
+
+<script>
+  $(document).on("submit", "form", function(e) {
+    e.preventDefault();
+
+    var template = {
+      name: $("input[name='name']").val(),
+      subject: $("input[name='subject']").val(),
+      body: $("textarea").val(),
+      update: $("input[name='name']").attr("disabled") === "disabled"
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "{{config.newTemplateRoute}}",
+      data: template
+    }).done();
+
+    $(".modal").modal("hide");
+  });
+</script>
+

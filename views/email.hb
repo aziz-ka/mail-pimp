@@ -8,7 +8,7 @@
       <form method="post" action="{{config.sendEmailRoute}}" enctype="multipart/form-data">
         <div class="form-group">
           <label for="address">Email</label>
-          <input type="email" name="address" class="form-control" multiple required>
+          <input type="email" name="address" class="form-control" placeholder="john.smith@example.com" multiple required>
         </div>
         <div class="form-group">
           <label for="templates">Template</label>
@@ -21,23 +21,24 @@
         </div>
         <div class="form-group">
           <label for="subject">Subject</label>
-          <input type="text" name="subject" class="form-control" required>
+          <input type="text" name="subject" class="form-control" placeholder="Hello there" required>
         </div>
         <div class="form-group">
           <label for="attachment">Attachment</label>
-          <input type="file" name="attachment" class="form-control">
+          <input type="file" name="attachment" class="form-control" disabled>
         </div>
         <div class="form-group col-xs-8">
           <br>
           <label for="message">Message</label>
-          <textarea name="message" id=""  class="form-control" rows="10" required></textarea>
+          <textarea name="message" id=""  class="form-control" rows="10" placeholder="Plain texr or HTML" required></textarea>
         </div>
         <div class="panel panel-default">
           <br>
           <div class="panel-body">
+            <p></p>
             <span class="text-primary">&lcub;&lcub;first_name&rcub;&rcub;</span><br>
             <span class="text-primary">&lcub;&lcub;last_name&rcub;&rcub;</span><br>
-            <span class="text-primary">&lcub;&lcub;company_name&rcub;&rcub;</span><br>
+            <span class="text-primary">&lcub;&lcub;company&rcub;&rcub;</span><br>
             <span class="text-primary">&lcub;&lcub;email&rcub;&rcub;</span><br>
             <span class="text-primary">&lcub;&lcub;address&rcub;&rcub;</span><br>
             <span class="text-primary">&lcub;&lcub;phone&rcub;&rcub;</span><br>
@@ -55,11 +56,11 @@
 
 <script>
   var user = {{{userJSON}}};
-  // console.log(user);
+  console.log(user);
   var subjectField = $("input[name='subject']");
   var messageField = $("textarea");
 
-  $("select").change(function(e) {
+  $("select").on("change", function(e) {
     var subject = e.target.value;
     for (var i = 0; i < user.templates.length; i++) {
       if(subject === user.templates[i].name) {
@@ -75,7 +76,7 @@
     }
   });
 
-  $(".panel-body span").click(function(e) {
+  $(".panel-body span").on("click", function(e) {
     var insert = $(this).text();
     messageField.val(messageField.val() + insert);
   });

@@ -3,14 +3,18 @@ var config = require("./config.js")();
 module.exports = function(db) {
   var users = db.collection(config.users);
 
-  this.newTemplate = function(template, user) {
+  this.newTemplate = function(user, template) {
     var templateModel = {
       name: template.name,
       subject: template.subject,
-      body: template.message
+      body: template.body
     };
 
-    users.update({"googleId": user.googleId}, {$addToSet: {"templates": templateModel}});
+    if(template.update === "true") {
+      users.update({"googleId": user.googleId, "templates.name": template.name}, {$set: {"templates.$": templateModel}});
+    } else {
+      users.update({"googleId": user.googleId}, {$addToSet: {"templates": templateModel}});
+    }
   };
 
   this.getTemplates = function(user) {
@@ -18,5 +22,9 @@ module.exports = function(db) {
       if(err) return err;
       return user;
     });
+  };
+
+  this.removeTemplate = function(user, template) {
+    users.update({"googleId": user.googleId}, {$pull: {"templates": {"name": template.templateName}}});
   };
 };

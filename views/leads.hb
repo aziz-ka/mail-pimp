@@ -28,7 +28,7 @@
             </tr>
             {{#each leads}}
               <tr>
-                <td class="text-center">{{@index}}</td>
+                <td class="text-center number"><span>{{@index}}</span><a href="{{config.removeLeadRoute}}" class="hidden remove">&times;</a></td>
                 <td>{{this.email}}</td>
                 <td>{{this.firstName}}</td>
                 <td>{{this.lastName}}</td>
@@ -44,32 +44,37 @@
 </div>
 
 <script>
-  $("tbody form").submit(function(e) {
+  $(document).on({mouseenter: toggleButton, mouseleave: toggleButton}, "td.number");
+  function toggleButton() {
+    $(this).children().toggleClass("hidden");
+  }
+
+  $(document).on("click", "td .remove", function(e) {
+    e.preventDefault();
+    var email = {email: $(this).parent().next().text()};
+    callServer("{{config.removeLeadRoute}}", email);
+    $(this).parent().parent().remove();
+  });
+
+  $(document).on("submit", "tbody form", function(e) {
     e.preventDefault();
     var email = $("input[name=email]").val(),
         firstName = $("input[name=firstName]").val(),
         lastName = $("input[name=lastName]").val(),
         company = $("input[name=company]").val(),
-        title = $("input[name=title]").val();
+        title = $("input[name=title]").val(),
+        leadInfo = {
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          company: company,
+          title: title
+        };
 
-    var leadInfo = {
-      email: email,
-      firstName: firstName,
-      lastName: lastName,
-      company: company,
-      title: title
-    };
-
-    $.ajax({
-      type: "POST",
-      url: "{{config.newLeadRoute}}",
-      data: leadInfo,
-    }).done(function(data) {
-      console.log(data);
-    });
+    callServer("{{config.newLeadRoute}}", leadInfo);
 
     var newLeadNum = parseInt($("tbody .text-center").last().text()) + 1;
-    var newLeadRow = "<tr><td class='text-center'>" + newLeadNum + "</td>";
+    var newLeadRow = "<tr><td class='text-center number'><span>" + newLeadNum + "</span><a href='{{config.removeLeadRoute}}' class='hidden remove'>&times;</a></td>";
         newLeadRow += "<td>" + email + "</td>";
         newLeadRow += "<td>" + firstName + "</td>";
         newLeadRow += "<td>" + lastName + "</td>";
@@ -79,5 +84,13 @@
 
     $("input").val("");
   });
+
+  function callServer(route, data) {
+    $.ajax({
+      type: "POST",
+      url: route,
+      data: data,
+    }).done();
+  }
 </script>
 
