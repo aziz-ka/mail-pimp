@@ -21,7 +21,7 @@ $(".schedules .glyphicon-trash").on("click", function(e) {
   if(window.confirm("Delete this schedule?")) {
     var name = this.parentNode.innerText.trim();
 
-    callServer("{{config.removeScheduleRoute}}", {name: name});
+    callServer(removeScheduleRoute, {name: name});
     
     this.parentNode.parentNode.remove();
   }
@@ -48,7 +48,7 @@ $("#schedule-form").on("submit", function(e) {
     update: update
   };
 
-  callServer("{{config.newScheduleRoute}}", scheduleData);
+  callServer(newScheduleRoute, scheduleData);
 
   if(!update) {
     $(".schedules").last().clone().insertAfter($(".panel").last());

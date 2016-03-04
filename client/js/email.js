@@ -34,7 +34,7 @@ $("#email-form").on("submit", function(e) {
 
   $.ajax({
     type: "POST",
-    url: "{{config.sendEmailRoute}}",
+    url: sendEmail,
     data: email
   }).done();
 

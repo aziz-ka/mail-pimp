@@ -121,6 +121,10 @@
   </div>
 </div>
 
-<script> var schedules = {{{schedulesJSON}}}; </script>
+<script>
+  var schedules = {{{schedulesJSON}}},
+      removeScheduleRoute = "{{config.removeScheduleRoute}}",
+      newScheduleRoute = "{{config.newScheduleRoute}}";
+</script>
 <script src="../js/schedules.js"></script>
 

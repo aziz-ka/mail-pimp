@@ -54,6 +54,10 @@
   {{> new-template}}
 </div>
 
-<script> var templates = {{{templatesJSON}}}; </script>
+<script>
+  var templates = {{{templatesJSON}}},
+      sendEmail = "{{config.sendEmailRoute}}";
+</script>
+
 <script src="../js/email.js"></script>
 

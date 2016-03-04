@@ -23,7 +23,7 @@ $(document).on("click", ".campaign .glyphicon-trash", function(e) {
 
   $.ajax({
     type: "POST",
-    url: "{{config.removeTemplateRoute}}",
+    url: removeTemplateRoute,
     data: {templateName: templateName}
   }).done();
 

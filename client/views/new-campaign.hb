@@ -66,6 +66,9 @@
   {{> new-template}}
 </div>
 
-<script> var templates = {{{templatesJSON}}}; </script>
+<script>
+  var templates = {{{templatesJSON}}},
+      removeTemplateRoute = "{{config.removeTemplateRoute}}";
+</script>
 <script src="../js/new-campaign.js"></script>
 

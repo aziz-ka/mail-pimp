@@ -43,5 +43,10 @@
   </div>
 </div>
 
+<script>
+  var removeLeadRoute = "{{config.removeLeadRoute}}",
+      newLeadRoute = "{{config.newLeadRoute}}";
+</script>
+
 <script src="../js/leads.js"></script>
 

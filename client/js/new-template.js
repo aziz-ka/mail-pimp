@@ -16,7 +16,7 @@ $(document).on("submit", "#template-form", function(e) {
 
   $.ajax({
     type: "POST",
-    url: "{{config.newTemplateRoute}}",
+    url: newTemplateRoute,
     data: template
   }).done();
 

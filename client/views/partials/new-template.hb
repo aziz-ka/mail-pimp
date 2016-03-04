@@ -37,5 +37,8 @@
   </div>
 </div>
 
+<script>
+  var newTemplateRoute = "{{config.newTemplateRoute}}";
+</script>
 <script src="../js/new-template.js"></script>
 

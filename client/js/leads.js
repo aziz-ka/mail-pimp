@@ -7,7 +7,7 @@ function toggleButton() {
 $(document).on("click", "td #remove", function(e) {
   e.preventDefault();
   var email = {email: $(this).parent().next().text()};
-  callServer("{{config.removeLeadRoute}}", email);
+  callServer(removeLeadRoute, email);
   $(this).parent().parent().remove();
 });
 
@@ -26,10 +26,10 @@ $(document).on("submit", "#lead-form", function(e) {
         title: title
       };
 
-  callServer("{{config.newLeadRoute}}", leadInfo);
+  callServer(newLeadRoute, leadInfo);
 
   var newLeadNum = parseInt($("tbody .text-center").last().text()) + 1;
-  var newLeadRow = "<tr><td class='text-center' id='number-column'><span>" + newLeadNum + "</span><a href='{{config.removeLeadRoute}}' class='hidden remove'>&times;</a></td>";
+  var newLeadRow = "<tr><td class='text-center' id='number-column'><span>" + newLeadNum + "</span><a href='" + removeLeadRoute + "' class='hidden remove'>&times;</a></td>";
       newLeadRow += "<td>" + email + "</td>";
       newLeadRow += "<td>" + firstName + "</td>";
       newLeadRow += "<td>" + lastName + "</td>";
