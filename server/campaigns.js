@@ -1,4 +1,4 @@
-var config = require("./config.js")(),
+var config = require("../config.js")(),
     Emailer = require(config.emailJS),
     moment = require("moment"),
     util = require("util");

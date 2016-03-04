@@ -1,28 +1,31 @@
 module.exports = function() {
   var devEnv = "development",
-      publicDir = "public",
+      clientDir = "./client",
       privateDir = "./private",
       routesDir = "./routes",
-      stylesDir = "./" + publicDir + "/css",
-      viewsDir = "views";
+      serverDir = "./server",
+      uploadsDir = "./uploads",
+      viewsDir = "/views",
+      buildDir = "./build";
   
   var config = {
     // directories
-    publicDir: publicDir,
+    clientDir: clientDir,
+    privateDir: privateDir,
     routesDir: routesDir,
-    stylesDir: stylesDir,
-    uploadsDir: "./uploads", /* / */
-    viewsDir: viewsDir,
+    serverDir: serverDir,
+    stylesDir: clientDir + "/css",
+    viewsDir: clientDir + viewsDir,
     // modules
-    appJS: "./app.js",
-    routesJS: routesDir + "/routes",
-    authJS: "./auth.js",
-    emailJS: "./email.js",
-    emailTemplatesJS: "./templates.js",
-    campaignsJS: "./campaigns.js",
-    leadsJS: "./leads.js",
-    schedulesJS: "./schedules",
-    settings: privateDir + "/settings.json",
+    appJS: "." + serverDir + "/app",
+    routesJS: "." + routesDir + "/routes",
+    authJS: "." + serverDir + "/auth",
+    emailJS: "." + serverDir + "/email",
+    emailTemplatesJS: "." + serverDir + "/templates",
+    campaignsJS: "." + serverDir + "/campaigns",
+    leadsJS: "." + serverDir + "/leads",
+    schedulesJS: "." + serverDir + "/schedules",
+    settings: "." + privateDir + "/settings",
     // collections
     users: "users",
     // app.js
@@ -34,7 +37,8 @@ module.exports = function() {
     HBExtName: "hb",
     errorView: "error",
     errorTitle: "error",
-    HBPartialsDir: viewsDir + "/partials",
+    HBLayoutsDir: clientDir + viewsDir + "/layouts",
+    HBPartialsDir: clientDir + viewsDir + "/partials",
     HBDefaultLayout: "main",
     // routes.js
     googleScopes: ["https://www.googleapis.com/auth/userinfo.email", "https://mail.google.com"],
@@ -55,7 +59,14 @@ module.exports = function() {
     newScheduleRoute: "/schedules/new",
     removeScheduleRoute: "/schedules/remove",
     // gulpfile.js
-    allStyles: stylesDir + "/*.scss",
+    startServer: "bin/www",
+    buildDir: buildDir,
+    buildJS: buildDir + "/js/**/*.js",
+    serverJS: serverDir + "/**/*.js",
+    srcJS: clientDir + "/js/**/*.js",
+    srcSCSS: clientDir + "/css/**/*.scss",
+    srcImg: clientDir + "/img/*.*",
+    srcViews: clientDir + "/views/**/*.hb"
   };
 
   return config;

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 var config = require("../config.js")();
-var app = require("." + config.appJS);
+var app = require(config.appJS);
 var env = config.env;
 
 app.set("port", config.port);

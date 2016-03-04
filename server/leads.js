@@ -1,4 +1,4 @@
-var config = require("./config.js")();
+var config = require("../config.js")();
 
 module.exports = function(db) {
   var users = db.collection(config.users);
@@ -23,5 +23,5 @@ module.exports = function(db) {
 
   this.removeLead = function(user, body) {
     users.update({"googleId": user.googleId}, {$pull: {"leads": {"email": body.email}}});
-  }
+  };
 };

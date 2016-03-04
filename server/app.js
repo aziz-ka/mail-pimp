@@ -10,7 +10,7 @@ var express = require('express'),
     MongoClient = require("mongodb").MongoClient,
     MongoConnect = require("connect-mongo")(session),
     moment = require("moment"),
-    config = require("./config.js")(),
+    config = require("../config.js")(),
     Auth = require(config.authJS),
     auth = new Auth();
 
@@ -24,7 +24,8 @@ MongoClient.connect(config.dbUrl, function(err, db) {
   var hbs = handlebars.create({
     extname: '.' + config.HBExtName,
     defaultLayout: config.HBDefaultLayout,
-    partialsDir: [config.HBPartialsDir],
+    layoutsDir: config.HBLayoutsDir,
+    partialsDir: config.HBPartialsDir,
     helpers: {
       dayOfWeek: function(dayNum) {
         if(dayNum == "0") return "Sunday";
@@ -41,7 +42,7 @@ MongoClient.connect(config.dbUrl, function(err, db) {
     }
   });
   app.engine(config.HBExtName, hbs.engine);
-  app.set('views', path.join(__dirname, config.viewsDir));
+  app.set('views', path.join(__dirname, "." + config.viewsDir));
   app.set('view engine', config.HBExtName);
 
   // app.use(favicon(__dirname + '/public/img/favicon.ico'));
@@ -51,7 +52,7 @@ MongoClient.connect(config.dbUrl, function(err, db) {
     extended: true
   }));
   app.use(cookieParser());
-  app.use(express.static(path.join(__dirname, config.publicDir)));
+  app.use(express.static(path.join(__dirname, "." + config.clientDir)));
 
   // development error handler; will print stacktrace
   if (app.get('env') === config.devEnv) {

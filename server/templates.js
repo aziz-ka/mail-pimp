@@ -1,4 +1,4 @@
-var config = require("./config.js")();
+var config = require("../config.js")();
 
 module.exports = function(db) {
   var users = db.collection(config.users);

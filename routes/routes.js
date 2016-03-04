@@ -3,12 +3,12 @@ var multer = require("multer"),
     upload = multer({dest: config.uploadsDir}),
     passport = require("passport"),
     scopes = config.googleScopes,
-    Auth = require("." + config.authJS),
-    EmailTemplates = require("." + config.emailTemplatesJS),
-    Emailer = require("." + config.emailJS),
-    Campaigns = require("." + config.campaignsJS),
-    Leads = require("." + config.leadsJS),
-    Schedules = require("." + config.schedulesJS);
+    Auth = require(config.authJS),
+    EmailTemplates = require(config.emailTemplatesJS),
+    Emailer = require(config.emailJS),
+    Campaigns = require(config.campaignsJS),
+    Leads = require(config.leadsJS),
+    Schedules = require(config.schedulesJS);
 
 module.exports = function(app, express, db) {
   var router = express.Router(),
@@ -21,7 +21,11 @@ module.exports = function(app, express, db) {
       schedules = new Schedules(db);
 
   router.get(config.indexRoute, function (req, res) {
-    res.render('index', { title: "MailPimp", user: req.user, config: config});
+    res.render('index', {
+      title: "MailPimp",
+      user: req.user,
+      config: config
+    });
   });
 
   router.get(config.googleAuth, passport.authenticate("google", {scope: scopes, accessType: "offline"}));
@@ -33,7 +37,11 @@ module.exports = function(app, express, db) {
 
   router.get(config.emailRoute, function (req, res, next) {
     var callback = function(result) {
-      res.render("email", {userJSON: JSON.stringify(req.user), templates: result.templates, config: config});
+      res.render("email", {
+        templates: result.templates,
+        templatesJSON: JSON.stringify(result.templates),
+        config: config
+      });
     };
     findUser(req.user, callback);
   });
@@ -55,7 +63,10 @@ module.exports = function(app, express, db) {
 
   router.get(config.campaignsRoute, function (req, res, next) {
     var callback = function(result) {
-      res.render("campaigns", {campaigns: result.campaigns, config: config});
+      res.render("campaigns", {
+        campaigns: result.campaigns,
+        config: config
+      });
     };
     findUser(req.user, callback);
   });
@@ -79,7 +90,10 @@ module.exports = function(app, express, db) {
 
   router.get(config.leadsRoute, function (req, res, next) {
     var callback = function(result) {
-      res.render("leads", {leads: result.leads, config: config});
+      res.render("leads", {
+        leads: result.leads,
+        config: config
+      });
     };
     findUser(req.user, callback);
   });
@@ -96,7 +110,11 @@ module.exports = function(app, express, db) {
 
   router.get(config.schedulesRoute, function (req, res, next) {
     var callback = function(result) {
-      res.render("schedules", {schedules: result.schedules, schedulesJSON: JSON.stringify(result.schedules), config: config});
+      res.render("schedules", {
+        schedules: result.schedules,
+        schedulesJSON: JSON.stringify(result.schedules),
+        config: config
+      });
     };
     findUser(req.user, callback);
   });

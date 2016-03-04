@@ -4,7 +4,7 @@
     <div class="col-xs-12 col-sm-6">
       <h2>New schedule</h2>
       <br>
-      <form action="{{config.newScheduleRoute}}" method="post" class="form-horizontal">
+      <form action="{{config.newScheduleRoute}}" method="post" class="form-horizontal" id="schedule-form">
         <div class="form-group">
           <label for="scheduleName" class="control-label col-xs-4">Name</label>
           <div class="col-xs-8">
@@ -90,7 +90,7 @@
           </div>
         </div>
         <button type="submit" class="btn btn-primary pull-right new-schedule">Save</button>
-        <a class="btn btn-link pull-right clear">Clear</a>
+        <a class="btn btn-link pull-right" id="clear">Clear</a>
       </form>
     </div>
 
@@ -98,7 +98,7 @@
       <h2 class="text-right">All schedules</h2>
       <br>
       {{#each schedules}}
-        <div class="panel panel-default">
+        <div class="panel panel-default schedules">
           <div class="panel-heading">
             <strong>{{this.name}}</strong>
             <span class="glyphicon glyphicon-trash pull-right"></span>
@@ -121,82 +121,6 @@
   </div>
 </div>
 
-<script>
-  var schedules = {{{schedulesJSON}}},
-      scheduleName = "input[name=scheduleName]",
-      update = false;
+<script> var schedules = {{{schedulesJSON}}}; </script>
+<script src="../js/schedules.js"></script>
 
-  $(".glyphicon-edit").on("click", function(e) {
-    var index = $(".glyphicon-edit").index(this),
-        slots = schedules[index].timeSlots,
-        name = schedules[index].name,
-        count = 6;
-
-    update = true;
-    $(scheduleName).val(name).attr("disabled", true);
-
-    for(var key in slots) {
-      var nextSlot = $(".from-slot")[count];
-      $(nextSlot).val(slots[key]);
-      count >= 6 ? count = 0 : count++;
-    }
-  });
-
-  $(".glyphicon-trash").on("click", function(e) {
-    if(window.confirm("Delete this schedule?")) {
-      var name = this.parentNode.innerText.trim();
-      $.ajax({
-        type: "POST",
-        url: "{{config.removeScheduleRoute}}",
-        data: {name: name}
-      });
-      this.parentNode.parentNode.remove();
-    }
-  });
-
-  $(".clear").on("click", function(e) {
-    $("input").val("");
-    $(scheduleName).removeAttr("disabled");
-    update = false;
-  });
-
-  $("form").on("submit", function(e) {
-    e.preventDefault();
-    var scheduleData = {
-      scheduleName: $(scheduleName).val(),
-      timeZone: $("input[name=timeZone]").val(),
-      monday: $("input[name=monday]").val(),
-      tuesday: $("input[name=tuesday]").val(),
-      wednesday: $("input[name=wednesday]").val(),
-      thursday: $("input[name=thursday]").val(),
-      friday: $("input[name=friday]").val(),
-      saturday: $("input[name=saturday]").val(),
-      sunday: $("input[name=sunday]").val(),
-      update: update
-    };
-
-    $.ajax({
-      type: "POST",
-      url: "{{config.newScheduleRoute}}",
-      data: scheduleData
-    }).done();
-
-    if(!update) {
-      $(".panel").last().clone().insertAfter($(".panel").last());
-      $(".panel-heading strong").last().text($(scheduleName).val());
-      var scheduledDays = "";
-      for(var key in scheduleData) {
-        if(/day/.test(key) && scheduleData[key]) {
-          scheduledDays += capitalizeFirstLetter(key + " ");
-        }
-      }
-      $(".panel-body").last().text(scheduledDays);
-    }
-
-    function capitalizeFirstLetter(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1);
-    }
-
-    $("input").val("");
-  });
-</script>

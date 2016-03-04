@@ -1,13 +1,15 @@
 var GoogleStrategy = require("passport-google-oauth").OAuth2Strategy,
     passport = require("passport"),
     chalk = require("chalk"),
-    config = require("./config.js")(),
+    config = require("../config.js")(),
     credentials = require(config.settings),
     clientID = credentials.google.clientID,
     clientSecret = credentials.google.clientSecret,
-    callbackURL = config.env === config.devEnv ? credentials.google.localCallbackURL : credentials.google.AWSCallbackURL,
+    callbackURL = config.env === config.devEnv ? credentials.google.devCallbackURL : credentials.google.prodCallbackURL,
     OAuth2 = require("googleapis").auth.OAuth2,
     oauth2Client = new OAuth2(clientID, clientSecret, callbackURL);
+
+    console.log(callbackURL);
 
 module.exports = function() {
   this.auth = function(app, db) {

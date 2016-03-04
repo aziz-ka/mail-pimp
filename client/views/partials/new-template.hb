@@ -3,7 +3,7 @@
     <div class="modal-content">
       <div class="modal-body">
         <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
-        <form action="{{config.newTemplateRoute}}" method="post">
+        <form action="{{config.newTemplateRoute}}" method="post" id="template-form">
           <div class="form-group">
             <label for="name">Template name</label>
             <input type="text" name="name" class="form-control" required>
@@ -19,7 +19,7 @@
           </div>
           <div class="panel panel-default">
             <br>
-            <div class="panel-body">
+            <div class="panel-body" id="template-inserts">
               <p></p>
               <span class="text-primary">&lcub;&lcub;first_name&rcub;&rcub;</span><br>
               <span class="text-primary">&lcub;&lcub;last_name&rcub;&rcub;</span><br>
@@ -30,31 +30,12 @@
               <span class="text-primary">&lcub;&lcub;website&rcub;&rcub;</span><br>
             </div>
           </div>
-          <button class="btn btn-primary" type="submit">Submit</button>
+          <button class="btn btn-primary" type="submit">Save</button>
         </form>          
       </div>
     </div>
   </div>
 </div>
 
-<script>
-  $(document).on("submit", "form", function(e) {
-    e.preventDefault();
-
-    var template = {
-      name: $("input[name='name']").val(),
-      subject: $("input[name='subject']").val(),
-      body: $("textarea").val(),
-      update: $("input[name='name']").attr("disabled") === "disabled"
-    };
-
-    $.ajax({
-      type: "POST",
-      url: "{{config.newTemplateRoute}}",
-      data: template
-    }).done();
-
-    $(".modal").modal("hide");
-  });
-</script>
+<script src="../js/new-template.js"></script>
 
